@@ -31,6 +31,8 @@ const addEvent = async (req, res,next) => {
             location: validResult.location,
             availableTickets: validResult.availableTickets,
             price: validResult.price,
+            date: validResult.date,
+            time: validResult.time,
         };
         await createRecord(eventPath, recordData);
 
@@ -78,6 +80,8 @@ const editEvent = async (req, res, next) => {
         location: validResult.location,
         availableTickets: validResult.availableTickets,
         price: validResult.price,
+        date: validResult.date,
+        time: validResult.time,
       };
       await updateRecord(eventPath, recordData);
   
