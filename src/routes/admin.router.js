@@ -6,7 +6,7 @@ router.route("/test").get(userControllers.test);
 
 router.route("/event/add").post(userControllers.addEvent);
 
-router.route("/event/edit").post(userControllers.editEvent);
+router.route("/event/edit/:eventId").post(userControllers.editEvent);
 
 router.route("/event/:eventId").delete(userControllers.deleteEvent);
 

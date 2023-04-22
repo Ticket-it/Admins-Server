@@ -20,7 +20,7 @@ const addEvent = async (req, res,next) => {
         // Generate a new UUID
         const eventId = uuidv4();
 
-        const eventPath = `Users/${eventId}`;
+        const eventPath = `Events/${eventId}`;
 
         /**
          * Create Record
@@ -32,7 +32,7 @@ const addEvent = async (req, res,next) => {
             availableTickets: validResult.availableTickets,
             price: validResult.price,
         };
-        await createRecord(userPath, recordData);
+        await createRecord(eventPath, recordData);
 
         return res.status(200).send({
             message: "true",
@@ -51,9 +51,47 @@ const addEvent = async (req, res,next) => {
  * @param {*} res 
  * @param {*} next 
  */
-const editEvent = async (req, res,next) => {
+const editEvent = async (req, res, next) => {
+    try {
+      const validResult = await eventValidSchema.validateAsync(req.body);
+  
+      const eventId = req.params.eventId;
+  
+      const eventPath = `Events/${eventId}`;
+  
+      /**
+       * Check if event exists
+       */
+      const eventRecord = await readRecord(eventPath); 
+  
+      if (!eventRecord) {
+        throw new createError[404](
+            "Event not found"
+        );
+      }
+  
+      /**
+       * Update event
+       */
+      const recordData = {
+        eventName: validResult.eventName,
+        location: validResult.location,
+        availableTickets: validResult.availableTickets,
+        price: validResult.price,
+      };
+      await updateRecord(eventPath, recordData);
+  
+      return res.status(200).send({
+        message: "true",
+        eventId: eventId,
+      });
 
-}
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  };
+  
 
 /**
  * Function to delete event
