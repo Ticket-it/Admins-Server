@@ -107,6 +107,27 @@ const deleteEvent = async (req, res,next) => {
 
     const eventId = req.params.eventId;
 
+    try {
+
+    // Check if the event exists in the database
+    const eventRecord = await readRecord(`Events/${eventId}`);
+
+    if (!eventRecord) {
+        throw new createError[404](
+            "Event not found"
+        );
+      }
+
+    // Delete the event from the database
+    await deleteRecord(`Events/${eventId}`);
+
+    return res.status(200).send({ message: "Event deleted successfully" });
+    
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+
 }
 
 /**

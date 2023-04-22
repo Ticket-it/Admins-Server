@@ -8,6 +8,6 @@ router.route("/event/add").post(userControllers.addEvent);
 
 router.route("/event/edit/:eventId").post(userControllers.editEvent);
 
-router.route("/event/:eventId").delete(userControllers.deleteEvent);
+router.route("/event/delete/:eventId").delete(userControllers.deleteEvent);
 
 module.exports = router;

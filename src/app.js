@@ -39,5 +39,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Users' Server listening on port ${port}`)
+  console.log(`Admins' Server listening on port ${port}`)
 })
