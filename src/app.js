@@ -5,14 +5,14 @@ const express = require('express')
 require("dotenv").config();
 const morgan = require('morgan')
 var cors = require("cors");
-const userRouter = require("./routes/user.router")
+const adminRouter = require("./routes/admin.router")
 const errorHandler = require("./middlewares/errorHandler");
 
 /**
  * Instances
  */
 const app = express()
-const USERS_ROUTER = "/api/users"
+const ADMIN_ROUTER = "/api/admin"
 const port = process.env.PORT || 3001;
 
 /**
@@ -31,7 +31,7 @@ app.use(errorHandler)
 /**
  * Routes
  */
-app.use(USERS_ROUTER,userRouter)
+app.use(ADMIN_ROUTER,adminRouter)
 
 
 app.get('/', (req, res) => {
