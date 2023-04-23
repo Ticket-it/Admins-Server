@@ -3,7 +3,7 @@ const createError = require("http-errors");
 const { v4: uuidv4 } = require('uuid');
 const { createRecord, readRecord, updateRecord, deleteRecord } = require('../utils/CRUD');
 const eventValidSchema =
-    require("../utils/event.validationSchema").eventValidSchemaRegister;
+    require("../utils/event.validationSchema").eventValidSchema;
 
 /**
  * Function to add event
@@ -29,7 +29,11 @@ const addEvent = async (req, res,next) => {
             eventId: eventId,
             eventName: validResult.eventName,
             location: validResult.location,
+            country: validResult.country,
+            description: validResult.description,
+            city: validResult.city,
             availableTickets: validResult.availableTickets,
+            imageURL: validResult.imageURL,
             price: validResult.price,
             date: validResult.date,
             time: validResult.time,
@@ -78,7 +82,11 @@ const editEvent = async (req, res, next) => {
       const recordData = {
         eventName: validResult.eventName,
         location: validResult.location,
+        country: validResult.country,
+        description: validResult.description,
+        city: validResult.city,
         availableTickets: validResult.availableTickets,
+        imageURL: validResult.imageURL,
         price: validResult.price,
         date: validResult.date,
         time: validResult.time,
