@@ -46,19 +46,27 @@ async function getAllRecords(path) {
 async function getEventsByType(type) {
     const eventsRef = ref(database, "Events");
     const eventsSnapshot = await get(eventsRef);
-  
+
     const events = [];
     if (eventsSnapshot.exists()) {
-      eventsSnapshot.forEach((eventChild) => {
-        const eventData = eventChild.val();
-        if (eventData.type === type) {
-          events.push(eventData);
-        }
-      });
+        eventsSnapshot.forEach((eventChild) => {
+            const eventData = eventChild.val();
+            if (eventData.type === type) {
+                const [day, month, year] = eventData.date.split("-");
+                const [hours, minutes] = eventData.time.split(":");
+                const eventDateTime = new Date(
+                    `${year}-${month}-${day}T${hours}:${minutes}:00`
+                );
+                const now = new Date();
+                if (eventDateTime >= now) {
+                    events.push(eventData);
+                }
+            }
+        });
     }
-  
+
     return events;
-  }
+}
 
 module.exports = {
     createRecord,
