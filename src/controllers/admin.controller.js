@@ -250,7 +250,10 @@ const getEventsByEventsTypeId = async (req, res, next) => {
  */
 const getTickets = async (req, res, next) => {
     try {
-        const tickets = await getTicketsWithEvents();
+
+        const eventId = req.params.eventId;
+
+        const tickets = await getTicketsWithEvents(eventId);
 
         res.status(200).send(tickets);
     } catch (error) {

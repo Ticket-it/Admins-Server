@@ -87,7 +87,7 @@ async function deleteTicketsByEventId(eventId) {
 }
 
 // Function to get all tickets with event details
-async function getTicketsWithEvents() {
+async function getTicketsWithEvents(paramsEventId) {
     const ticketsRef = ref(database, "Tickets");
     const ticketsSnapshot = await get(ticketsRef);
 
@@ -97,13 +97,16 @@ async function getTicketsWithEvents() {
         ticketsSnapshot.forEach((ticketChild) => {
             const ticketData = ticketChild.val();
             const eventId = ticketData.eventId;
-            const eventPromise = readRecord(`Events/${eventId}`).then((eventRecord) => {
-                if (eventRecord) {
-                    ticketData.eventDetails = eventRecord;
-                    tickets.push(ticketData);
-                }
-            });
-            ticketPromises.push(eventPromise);
+            if(paramsEventId == eventId){
+                const eventPromise = readRecord(`Events/${eventId}`).then((eventRecord) => {
+                    if (eventRecord) {
+                        ticketData.eventDetails = eventRecord;
+                        tickets.push(ticketData);
+                    }
+                });
+                ticketPromises.push(eventPromise);
+            }
+            
         });
         await Promise.all(ticketPromises);
     }

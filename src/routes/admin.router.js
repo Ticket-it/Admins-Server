@@ -26,7 +26,7 @@ router.route("/event-types").get(userControllers.getEventTypes);
 router.route("/events/:eventTypeId").get(userControllers.getEventsByEventsTypeId);
 
 // To get all tickets
-router.route("/tickets").get(userControllers.getTickets);
+router.route("/tickets/:eventId").get(userControllers.getTickets);
 
 // To confirm booking
 router.route("/tickets/edit/:ticketId").post(userControllers.confirmTicket);
