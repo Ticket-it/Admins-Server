@@ -25,4 +25,13 @@ router.route("/event-types").get(userControllers.getEventTypes);
 // To get all events by event type ID
 router.route("/events/:eventTypeId").get(userControllers.getEventsByEventsTypeId);
 
+// To get all tickets
+router.route("/tickets").get(userControllers.getTickets);
+
+// To confirm booking
+router.route("/tickets/edit/:ticketId").post(userControllers.confirmTicket);
+
+// To get user details by userid
+router.route("/users/:userId").get(userControllers.getUserByUserId);
+
 module.exports = router;

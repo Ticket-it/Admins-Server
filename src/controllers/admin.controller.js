@@ -8,6 +8,8 @@ const {
     deleteRecord,
     getAllRecords,
     getEventsByType,
+    deleteTicketsByEventId,
+    getTicketsWithEvents,
 } = require("../utils/CRUD");
 const eventValidSchema =
     require("../utils/event.validationSchema").eventValidSchema;
@@ -96,9 +98,6 @@ const editEvent = async (req, res, next) => {
          */
         const eventTypePath = `Events-Type/${validResult.type}`;
 
-        /**
-         * Check if event exists
-         */
         const eventTypeRecord = await readRecord(eventTypePath);
 
         if (!eventTypeRecord) {
@@ -150,6 +149,8 @@ const deleteEvent = async (req, res, next) => {
             throw new createError[404]("Event not found");
         }
 
+        await deleteTicketsByEventId(eventId)
+
         // Delete the event from the database
         await deleteRecord(`Events/${eventId}`);
 
@@ -193,6 +194,7 @@ const addEventType = async (req, res, next) => {
         next(error);
     }
 };
+
 
 /**
  * Function to get all event types
@@ -240,6 +242,89 @@ const getEventsByEventsTypeId = async (req, res, next) => {
     }
 };
 
+/**
+ * Function to get all tickets
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const getTickets = async (req, res, next) => {
+    try {
+        const tickets = await getTicketsWithEvents();
+
+        res.status(200).send(tickets);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
+/**
+ * Function to confirm Ticket
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const confirmTicket = async (req, res, next) => {
+    try {
+
+        const ticketId = req.params.ticketId;
+
+        const ticketPath = `Tickets/${ticketId}`;
+
+        /**
+         * Check if ticket exists
+         */
+        const ticketRecord = await readRecord(ticketPath);
+
+        if (!ticketRecord) {
+            throw new createError[404]("Ticket not found");
+        }
+
+        /**
+         * Update event
+         */
+        const recordData = {
+            status: req.body.status
+        };
+        await updateRecord(ticketPath, recordData);
+
+        return res.status(200).send({
+            message: "true",
+        });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
+/**
+ * Function to get user detials by userId
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const getUserByUserId = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+
+        /**
+         * Check if type does not exists
+         */
+        const userPath = `Users/${userId}`;
+        const userRecord = await readRecord(userPath);
+
+        if (!userRecord) {
+            throw new createError[404]("User not found");
+        }
+
+        res.status(200).send(userRecord);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
 module.exports = {
     addEvent,
     editEvent,
@@ -247,4 +332,7 @@ module.exports = {
     addEventType,
     getEventTypes,
     getEventsByEventsTypeId,
+    getTickets,
+    confirmTicket,
+    getUserByUserId,
 };

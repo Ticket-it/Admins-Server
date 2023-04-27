@@ -68,6 +68,51 @@ async function getEventsByType(type) {
     return events;
 }
 
+// Function to delete tickets by event id
+async function deleteTicketsByEventId(eventId) {
+    
+    // Delete all Tickets nodes with the same eventid
+    const ticketsRef = ref(database, "Tickets");
+    const ticketsSnapshot = await get(ticketsRef);
+
+    if (ticketsSnapshot.exists()) {
+        ticketsSnapshot.forEach((ticketChild) => {
+            const ticketData = ticketChild.val();
+            if (ticketData.eventId === eventId) {
+                const ticketId = ticketChild.key;
+                deleteRecord(`Tickets/${ticketId}`);
+            }
+        });
+    }
+}
+
+// Function to get all tickets with event details
+async function getTicketsWithEvents() {
+    const ticketsRef = ref(database, "Tickets");
+    const ticketsSnapshot = await get(ticketsRef);
+
+    const tickets = [];
+    if (ticketsSnapshot.exists()) {
+        const ticketPromises = [];
+        ticketsSnapshot.forEach((ticketChild) => {
+            const ticketData = ticketChild.val();
+            const eventId = ticketData.eventId;
+            const eventPromise = readRecord(`Events/${eventId}`).then((eventRecord) => {
+                if (eventRecord) {
+                    ticketData.eventDetails = eventRecord;
+                    tickets.push(ticketData);
+                }
+            });
+            ticketPromises.push(eventPromise);
+        });
+        await Promise.all(ticketPromises);
+    }
+
+    return tickets;
+}
+
+
+
 module.exports = {
     createRecord,
     readRecord,
@@ -75,4 +120,6 @@ module.exports = {
     deleteRecord,
     getAllRecords,
     getEventsByType,
+    deleteTicketsByEventId,
+    getTicketsWithEvents,
 };
