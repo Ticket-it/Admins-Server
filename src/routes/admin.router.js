@@ -34,4 +34,10 @@ router.route("/tickets/edit/:ticketId").post(userControllers.confirmTicket);
 // To get user details by userid
 router.route("/users/:userId").get(userControllers.getUserByUserId);
 
+// To approve all tickets
+router.route("/tickets-approve-all/:eventId").get(userControllers.approveAllTickets);
+
+// To get Tickets of a specific user
+router.route("/tickets-user/:userId").get(userControllers.getTicketsOfSpecificUser);
+
 module.exports = router;

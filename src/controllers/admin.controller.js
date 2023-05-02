@@ -10,6 +10,9 @@ const {
     getEventsByType,
     deleteTicketsByEventId,
     getTicketsWithEvents,
+    approveTicketsByEventId,
+    getHistoryById
+
 } = require("../utils/CRUD");
 const eventValidSchema =
     require("../utils/event.validationSchema").eventValidSchema;
@@ -293,8 +296,37 @@ const confirmTicket = async (req, res, next) => {
         await updateRecord(ticketPath, recordData);
 
         return res.status(200).send({
-            message: "true",
+            message: req.body.status,
         });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
+/**
+ * Function to approve on all tickets
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const approveAllTickets = async (req, res, next) => {
+    try {
+        const eventId = req.params.eventId;
+
+        /**
+         * Check if type does not exists
+         */
+        const eventPath = `Events/${eventId}`;
+        const eventRecord = await readRecord(eventPath);
+
+        if (!eventRecord) {
+            throw new createError[404]("User not found");
+        }
+
+        const tickets = await approveTicketsByEventId(eventId)
+
+        res.status(200).send(tickets);
     } catch (error) {
         console.error(error);
         next(error);
@@ -328,6 +360,40 @@ const getUserByUserId = async (req, res, next) => {
     }
 };
 
+/**
+ * Function to get Tickets Of Specific User
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const getTicketsOfSpecificUser = async (req, res, next) => {
+
+    try {
+            console.log("SSS")
+        const userId = req.params.userId;
+
+        /**
+         * Check if user does not exists
+         */
+        const userPath = `Users/${userId}`;
+        const userRecord = await readRecord(userPath);
+
+        if (!userRecord) {
+            throw new createError[404]("User not found");
+        }
+
+        const history=await getHistoryById(userId);
+
+        res.status(200).send({
+            history
+        });
+
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
 module.exports = {
     addEvent,
     editEvent,
@@ -338,4 +404,7 @@ module.exports = {
     getTickets,
     confirmTicket,
     getUserByUserId,
+    approveAllTickets,
+    getTicketsOfSpecificUser
+
 };

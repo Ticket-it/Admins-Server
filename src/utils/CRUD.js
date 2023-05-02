@@ -70,7 +70,7 @@ async function getEventsByType(type) {
 
 // Function to delete tickets by event id
 async function deleteTicketsByEventId(eventId) {
-    
+
     // Delete all Tickets nodes with the same eventid
     const ticketsRef = ref(database, "Tickets");
     const ticketsSnapshot = await get(ticketsRef);
@@ -97,7 +97,7 @@ async function getTicketsWithEvents(paramsEventId) {
         ticketsSnapshot.forEach((ticketChild) => {
             const ticketData = ticketChild.val();
             const eventId = ticketData.eventId;
-            if(paramsEventId == eventId){
+            if (paramsEventId == eventId) {
                 const eventPromise = readRecord(`Events/${eventId}`).then((eventRecord) => {
                     if (eventRecord) {
                         ticketData.eventDetails = eventRecord;
@@ -106,7 +106,7 @@ async function getTicketsWithEvents(paramsEventId) {
                 });
                 ticketPromises.push(eventPromise);
             }
-            
+
         });
         await Promise.all(ticketPromises);
     }
@@ -114,6 +114,78 @@ async function getTicketsWithEvents(paramsEventId) {
     return tickets;
 }
 
+
+
+async function approveTicketsByEventId(paramsEventId) {
+    const ticketsRef = ref(database, "Tickets");
+    const ticketsSnapshot = await get(ticketsRef);
+  
+    const tickets = [];
+  
+    if (ticketsSnapshot.exists()) {
+      const ticketPromises = [];
+  
+      ticketsSnapshot.forEach((ticketChild) => {
+        const ticketData = ticketChild.val();
+        const eventId = ticketData.eventId;
+        console.log(ticketData.ticketId)
+  
+        if (paramsEventId == eventId) {
+          const recordData = {
+            status: "Approved"
+          };
+          const promise = updateRecord(`Tickets/${ticketData.ticketId}`, recordData)
+            .then(() => {
+              // Update the ticketData object with the new status
+              ticketData.status = "Approved";
+            });
+          ticketPromises.push(promise);
+        }
+        
+        tickets.push(ticketData);
+      });
+  
+      await Promise.all(ticketPromises);
+    }
+  
+    return tickets;
+  }
+  
+  // Function to get all events by event type id and filter events by date and time
+async function getHistoryById(userId) {
+    const ticketsRef = ref(database, "Tickets");
+    const ticketsSnapshot = await get(ticketsRef);
+
+    let subObject = {}
+    const tickets = [];
+    if (ticketsSnapshot.exists()) {
+        const ticketPromises = [];
+        ticketsSnapshot.forEach((ticketChild) => {
+            const ticketData = ticketChild.val();
+            if (ticketData.userId == userId) {
+                const eventPromise = readRecord(`Events/${ticketData.eventId}`).then(async (eventRecord) => {
+                    if (eventRecord) {
+                        ticketData.eventDetails = eventRecord;
+                        ticketData.eventDetails.availableTickets = "";
+                        tickets.push(ticketData);
+                    }
+                });
+                ticketPromises.push(eventPromise);
+            }
+
+        });
+        subObject = {
+            tickets,
+        }
+        await readRecord(`Users/${userId}`).then((userRecord) => {
+            subObject.email = userRecord.email;
+            subObject.fullName = userRecord.fullName;
+        });
+        await Promise.all(ticketPromises);
+    }
+
+    return subObject;
+}
 
 
 module.exports = {
@@ -125,4 +197,7 @@ module.exports = {
     getEventsByType,
     deleteTicketsByEventId,
     getTicketsWithEvents,
+    approveTicketsByEventId,
+    getHistoryById
+
 };
