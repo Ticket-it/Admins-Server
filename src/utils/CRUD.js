@@ -86,32 +86,42 @@ async function deleteTicketsByEventId(eventId) {
     }
 }
 
-// Function to get all tickets with event details
+// Function to get all approved tickets by event Id
 async function getTicketsWithEvents(paramsEventId) {
     const ticketsRef = ref(database, "Tickets");
     const ticketsSnapshot = await get(ticketsRef);
-
     const tickets = [];
+
     if (ticketsSnapshot.exists()) {
         const ticketPromises = [];
         ticketsSnapshot.forEach((ticketChild) => {
             const ticketData = ticketChild.val();
             const eventId = ticketData.eventId;
-            if (paramsEventId == eventId) {
-                const eventPromise = readRecord(`Events/${eventId}`).then((eventRecord) => {
+            if (paramsEventId === eventId && ticketData.status === "pending") {
+                const eventPromise = readRecord(`Events/${eventId}`).then(async (eventRecord) => {
                     if (eventRecord) {
                         ticketData.eventDetails = eventRecord;
+                        const userId = ticketData.userId;
+                        const userPromise = await readRecord(`Users/${userId}`).then(async (userRecord) => {
+                            if (userRecord) {
+                                ticketData.userName = userRecord.fullName;
+                                ticketData.email = userRecord.email;
+                                ticketData.mobileNo = userRecord.mobileNo;
+                                ticketData.userId = userId; 
+
+                            }
+                        });
+                        ticketPromises.push(userPromise);
                         tickets.push(ticketData);
                     }
                 });
                 ticketPromises.push(eventPromise);
             }
-
         });
         await Promise.all(ticketPromises);
     }
-
     return tickets;
+
 }
 
 
@@ -127,9 +137,7 @@ async function approveTicketsByEventId(paramsEventId) {
   
       ticketsSnapshot.forEach((ticketChild) => {
         const ticketData = ticketChild.val();
-        const eventId = ticketData.eventId;
-        console.log(ticketData.ticketId)
-  
+        const eventId = ticketData.eventId;  
         if (paramsEventId == eventId) {
           const recordData = {
             status: "Approved"
@@ -140,9 +148,10 @@ async function approveTicketsByEventId(paramsEventId) {
               ticketData.status = "Approved";
             });
           ticketPromises.push(promise);
+          tickets.push(ticketData);
         }
         
-        tickets.push(ticketData);
+        
       });
   
       await Promise.all(ticketPromises);

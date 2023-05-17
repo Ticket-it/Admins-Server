@@ -253,11 +253,21 @@ const getEventsByEventsTypeId = async (req, res, next) => {
  */
 const getTickets = async (req, res, next) => {
     try {
-
         const eventId = req.params.eventId;
+        /**
+         * Check if event does not exists
+         */
+        const event = `Events/${eventId}`;
+        const eventRecord = await readRecord(event);
+
+        if (!eventRecord) {
+            return res.status(404).json({
+                status: 404,
+                message: "Event not found"
+            });
+        }
 
         const tickets = await getTicketsWithEvents(eventId);
-
         res.status(200).send(tickets);
     } catch (error) {
         console.error(error);

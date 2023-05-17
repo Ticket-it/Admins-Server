@@ -17,16 +17,16 @@ router.route("/event/edit/:eventId").post(userControllers.editEvent);
 router.route("/event/delete/:eventId").delete(userControllers.deleteEvent);
 
 // To add an event
-router.route("/event-type/add").post(userControllers.addEventType);
+router.route("/event-type/add").post(userControllers.addEventType); //done
 
 // To get all event types
-router.route("/event-types").get(userControllers.getEventTypes);
+router.route("/event-types").get(userControllers.getEventTypes); //done
 
 // To get all events by event type ID
-router.route("/events/:eventTypeId").get(userControllers.getEventsByEventsTypeId);
+router.route("/events/:eventTypeId").get(userControllers.getEventsByEventsTypeId); //done
 
 // To get all tickets
-router.route("/tickets/:eventId").get(userControllers.getTickets);
+router.route("/tickets/:eventId").get(userControllers.getTickets); //done
 
 // To confirm booking
 router.route("/tickets/edit/:ticketId").post(userControllers.confirmTicket);
@@ -35,7 +35,7 @@ router.route("/tickets/edit/:ticketId").post(userControllers.confirmTicket);
 router.route("/users/:userId").get(userControllers.getUserByUserId);
 
 // To approve all tickets
-router.route("/tickets-approve-all/:eventId").get(userControllers.approveAllTickets);
+router.route("/tickets-approve-all/:eventId").get(userControllers.approveAllTickets); //done
 
 // To get Tickets of a specific user
 router.route("/tickets-user/:userId").get(userControllers.getTicketsOfSpecificUser);
