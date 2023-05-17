@@ -175,7 +175,6 @@ async function getHistoryById(userId) {
                 const eventPromise = readRecord(`Events/${ticketData.eventId}`).then(async (eventRecord) => {
                     if (eventRecord) {
                         ticketData.eventDetails = eventRecord;
-                        ticketData.eventDetails.availableTickets = "";
                         tickets.push(ticketData);
                     }
                 });
@@ -186,10 +185,6 @@ async function getHistoryById(userId) {
         subObject = {
             tickets,
         }
-        await readRecord(`Users/${userId}`).then((userRecord) => {
-            subObject.email = userRecord.email;
-            subObject.fullName = userRecord.fullName;
-        });
         await Promise.all(ticketPromises);
     }
 

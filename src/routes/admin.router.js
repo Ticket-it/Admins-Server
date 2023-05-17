@@ -29,7 +29,7 @@ router.route("/events/:eventTypeId").get(userControllers.getEventsByEventsTypeId
 router.route("/tickets/:eventId").get(userControllers.getTickets); //done
 
 // To confirm booking
-router.route("/tickets/edit/:ticketId").post(userControllers.confirmTicket);
+router.route("/tickets/:ticketId").post(userControllers.confirmTicket); //done
 
 // To get user details by userid
 router.route("/users/:userId").get(userControllers.getUserByUserId);
@@ -38,6 +38,6 @@ router.route("/users/:userId").get(userControllers.getUserByUserId);
 router.route("/tickets-approve-all/:eventId").get(userControllers.approveAllTickets); //done
 
 // To get Tickets of a specific user
-router.route("/tickets-user/:userId").get(userControllers.getTicketsOfSpecificUser);
+router.route("/tickets-user/:userId").get(userControllers.getTicketsOfSpecificUser); //done
 
 module.exports = router;

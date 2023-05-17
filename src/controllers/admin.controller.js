@@ -294,7 +294,10 @@ const confirmTicket = async (req, res, next) => {
         const ticketRecord = await readRecord(ticketPath);
 
         if (!ticketRecord) {
-            throw new createError[404]("Ticket not found");
+            return res.status(404).json({
+                status: 404,
+                message: "Ticket not found"
+            });
         }
 
         /**
@@ -306,7 +309,7 @@ const confirmTicket = async (req, res, next) => {
         await updateRecord(ticketPath, recordData);
 
         return res.status(200).send({
-            message: req.body.status,
+            message: "true",
         });
     } catch (error) {
         console.error(error);
@@ -379,7 +382,7 @@ const getUserByUserId = async (req, res, next) => {
 const getTicketsOfSpecificUser = async (req, res, next) => {
 
     try {
-            console.log("SSS")
+
         const userId = req.params.userId;
 
         /**
@@ -389,12 +392,15 @@ const getTicketsOfSpecificUser = async (req, res, next) => {
         const userRecord = await readRecord(userPath);
 
         if (!userRecord) {
-            throw new createError[404]("User not found");
+            return res.status(404).json({
+                status: 404,
+                message: "Error, User not found"
+              });
         }
 
-        const history=await getHistoryById(userId);
-
-        res.status(200).send({
+        const history=await getHistoryById(userId);        
+    
+        return res.status(200).send({
             history
         });
 
@@ -403,6 +409,7 @@ const getTicketsOfSpecificUser = async (req, res, next) => {
         next(error);
     }
 };
+
 
 module.exports = {
     addEvent,
