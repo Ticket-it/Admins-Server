@@ -14,7 +14,7 @@ router.route("/event/add").post(userControllers.addEvent);
 router.route("/event/edit/:eventId").post(userControllers.editEvent);
 
 // To delete an event
-router.route("/event/delete/:eventId").delete(userControllers.deleteEvent);
+router.route("/event/delete/:eventId").get(userControllers.deleteEvent);
 
 // To add an event
 router.route("/event-type/add").post(userControllers.addEventType); //done
